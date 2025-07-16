@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Application Notes</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f8f8f8;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 220px);
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    button {
+      width: 220px;
+      height: 220px;
+      font-size: 24px;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #result {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 22px;
+      height: 300px;
+      overflow-y: scroll;
+      white-space: pre-wrap;
+    }
+    #image {
+      width: 220px;
+      height: 220px;
+      margin-top: 20px;
+      object-fit: contain;
+      border: 1px solid #ccc;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Application Notes</h1>
+<textarea id="texte" placeholder="Écris ton texte ici"></textarea>
+
+<div class="grid">
+  <button style="background: green;" onclick="chercher()">Chercher</button>
+  <button style="background: blue;" onclick="enregistrer()">Enregistrer</button>
+  <button style="background: gray;" onclick="zoom()">Zoom</button>
+  <button style="background: red;" onclick="supprimer()">Supprimer</button>
+  <button style="background: orange;" onclick="imageWeb()">Image Web</button>
+  <button style="background: #aaa;" onclick="alert('Fonction vide')">Bouton Vide</button>
+</div>
+
+<img id="image" src="" alt="Image Web">
+
+<div id="result">Aucun texte enregistré pour le moment.</div>
+
+<script>
+let taillePolice = 24;
+
+function enregistrer() {
+  let texte = document.getElementById("texte").value.trim();
+  if (!texte) return;
+  let anciens = localStorage.getItem("notes") || "";
+  localStorage.setItem("notes", anciens + texte + "\n---\n");
+  document.getElementById("texte").value = "";
+  chargerTextes();
+}
+
+function supprimer() {
+  localStorage.removeItem("notes");
+  document.getElementById("result").textContent = "✅ Textes supprimés.";
+  document.getElementById("texte").value = "";
+}
+
+function chargerTextes() {
+  let contenu = localStorage.getItem("notes");
+  if (contenu) {
+    document.getElementById("result").textContent = "Textes enregistrés :\n\n" + contenu;
+  } else {
+    document.getElementById("result").textContent = "Aucun texte enregistré pour le moment.";
+  }
+}
+function chercher() {
+  let mot = prompt("Mot-clé à rechercher :");
+  let contenu = localStorage.getItem("notes") || "";
+  if (mot && contenu.includes(mot)) {
+    let resultats = contenu.split("\n---\n").filter(p => p.includes(mot));
+    document.getElementById("result").innerHTML = "Résultats :\n\n" + resultats.join("\n---\n");
+  } else {
+    document.getElementById("result").textContent = "Aucun résultat trouvé.";
+  }
+}
+
+function imageWeb() {
+  const url = "http://www.lpr.it/img/lpr_catalogo/pastiglie/05P802.jpg";
+  document.getElementById("image").src = url;
+  document.getElementById("result").innerHTML = `
+<b>Références compatibles avec la plaquette 05P802 :</b><br><br>
+- FERODO : FDB5025, FDB4066<br>
+- FOMAR Friction : FO906181<br>
+- FTE : BL1793A3<br>
+- ICER : 181388<br>
+- JURATEK : JCP1399<br>
+- JURID : 573030J<br>
+- MAGNETI MARELLI : 363916061132, 363916061141, 363916060174<br>
+- METELLI : 2203270<br>
+- MINTEX : MDB2283<br>
+- PAGID : T1422<br>
+- RAICAM : RA07250<br>
+- REMSA : 084020, 084010, 084082<br>
+- ROADHOUSE : 284010, 284082, 284020<br>
+- ROULUNDS BRAKING : 51906181<br>
+- SAMKO : 5SP802<br>
+- SIMER : 808<br>
+- TEXTAR : 2395401<br>
+- TRW : GDB1677, GDB1463, GDB1462<br>
+- VALEO : 598464<br>
+- WAGNER : WBP23599A<br>
+- ZIMMERMANN : 239541901
+`;
+}
+
+function zoom() {
+  taillePolice += 4;
+  if (taillePolice > 80) taillePolice = 24;
+  document.getElementById("texte").style.fontSize = taillePolice + "px";
+  document.getElementById("result").style.fontSize = taillePolice + "px";
+}
+
+chargerTextes();
+</script>
+
+</body>
+</html>
